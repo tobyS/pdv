@@ -121,9 +121,9 @@ let g:pdv_cfg_EOL = ""
  " {{{ PhpDocSingle()
  " Document a single line of code ( does not check if doc block already exists )
 
-func! PhpDocSingle()
+func! pdv#PhpDocSingle()
     let l:endline = line(".") + 1
-    call PhpDoc()
+    call pdv#PhpDoc()
     exe "norm! " . l:endline . "G$"
 endfunc
 
@@ -132,7 +132,7 @@ endfunc
  " Documents a whole range of code lines ( does not add defualt doc block to
  " unknown types of lines ). Skips elements where a docblock is already
  " present.
-func! PhpDocRange() range
+func! pdv#PhpDocRange() range
     let l:line = a:firstline
     let l:endLine = a:lastline
 	let l:elementName = ""
@@ -144,7 +144,7 @@ func! PhpDocRange() range
 			" Ensure we are on the correct line to run PhpDoc()
             exe "norm! " . l:line . "G$"
 			" No matter what, this returns the element name
-            let l:elementName = PhpDoc()
+            let l:elementName = pdv#PhpDoc()
             let l:endLine = l:endLine + (line(".") - l:line) + 1
             let l:line = line(".") + 1 
         endif
@@ -155,7 +155,7 @@ endfunc
  " }}}
 " {{{ PhpDocFold()
 
-" func! PhpDocFold(name)
+" func! pdv#PhpDocFold(name)
 " 	let l:startline = line(".")
 " 	let l:currentLine = l:startLine
 " 	let l:commentHead = escape(g:pdv_cfg_CommentHead, "*.");
@@ -187,7 +187,7 @@ endfunc
 
 " {{{ PhpDoc()
 
-func! PhpDoc()
+func! pdv#PhpDoc()
     " Needed for my .vimrc: Switch off all other enhancements while generating docs
     let l:paste = &g:paste
     let &g:paste = g:pdv_cfg_paste == 1 ? 1 : &g:paste
@@ -196,16 +196,16 @@ func! PhpDoc()
     let l:result = ""
 
     if l:line =~ g:pdv_re_func
-        let l:result = PhpDocFunc()
+        let l:result = pdv#PhpDocFunc()
 
     elseif l:line =~ g:pdv_re_attribute
-        let l:result = PhpDocVar()
+        let l:result = pdv#PhpDocVar()
 
     elseif l:line =~ g:pdv_re_class
-        let l:result = PhpDocClass()
+        let l:result = pdv#PhpDocClass()
 
     else
-        let l:result = PhpDocDefault()
+        let l:result = pdv#PhpDocDefault()
 
     endif
 
@@ -221,7 +221,7 @@ endfunc
 " }}}
 " {{{  PhpDocFunc()  
 
-func! PhpDocFunc()
+func! pdv#PhpDocFunc()
     " Line for the comment to begin
     let l:commentline = line (".") - 1
 
@@ -239,7 +239,7 @@ func! PhpDocFunc()
     let l:modifier = substitute (l:name, g:pdv_re_func, '\1', "g")
     let l:funcname = substitute (l:name, g:pdv_re_func, '\2', "g")
     let l:parameters = substitute (l:name, g:pdv_re_func, '\3', "g") . ","
-    let l:scope = PhpDocScope(l:modifier, l:funcname)
+    let l:scope = pdv#PhpDocScope(l:modifier, l:funcname)
     let l:static = g:pdv_cfg_php4always == 1 ? matchstr(l:modifier, g:pdv_re_static) : ""
     let l:abstract = g:pdv_cfg_php4always == 1 ? matchstr(l:modifier, g:pdv_re_abstract) : ""
     let l:final = g:pdv_cfg_php4always == 1 ? matchstr(l:modifier, g:pdv_re_final) : ""
@@ -266,7 +266,7 @@ func! PhpDocFunc()
         let l:paramdefault = substitute (_p, g:pdv_re_param, '\3', "")
 
         if l:paramtype == ""
-            let l:paramtype = PhpDocType(l:paramdefault)
+            let l:paramtype = pdv#PhpDocType(l:paramdefault)
         endif
         
         if l:paramtype != ""
@@ -299,7 +299,7 @@ endfunc
 " }}}  
  " {{{  PhpDocVar() 
 
-func! PhpDocVar()
+func! pdv#PhpDocVar()
 	" Line for the comment to begin
 	let commentline = line (".") - 1
 
@@ -315,11 +315,11 @@ func! PhpDocVar()
 	let l:modifier = substitute (l:name, g:pdv_re_attribute, '\1', "g")
 	let l:varname = substitute (l:name, g:pdv_re_attribute, '\3', "g")
 	let l:default = substitute (l:name, g:pdv_re_attribute, '\4', "g")
-    let l:scope = PhpDocScope(l:modifier, l:varname)
+    let l:scope = pdv#PhpDocScope(l:modifier, l:varname)
 
     let l:static = g:pdv_cfg_php4always == 1 ? matchstr(l:modifier, g:pdv_re_static) : ""
 
-    let l:type = PhpDocType(l:default)
+    let l:type = pdv#PhpDocType(l:default)
 
     let l:comment_lines = []
 	
@@ -344,7 +344,7 @@ endfunc
 " }}}
 "  {{{  PhpDocClass()
 
-func! PhpDocClass()
+func! pdv#PhpDocClass()
 	" Line for the comment to begin
 	let commentline = line (".") - 1
 
@@ -401,7 +401,7 @@ endfunc
 " }}} 
 " {{{ PhpDocScope() 
 
-func! PhpDocScope(modifiers, identifier)
+func! pdv#PhpDocScope(modifiers, identifier)
 " exe g:pdv_cfg_BOL . DEBUG: . a:modifiers . g:pdv_cfg_EOL
     let l:scope  = ""
     if  matchstr (a:modifiers, g:pdv_re_scope) != "" 
@@ -424,7 +424,7 @@ endfunc
 " }}}
 " {{{ PhpDocType()
 
-func! PhpDocType(typeString)
+func! pdv#PhpDocType(typeString)
     let l:type = ""
     if a:typeString =~ g:pdv_re_array 
         let l:type = "array"
@@ -450,7 +450,7 @@ endfunc
 "  }}} 
 " {{{  PhpDocDefault()
 
-func! PhpDocDefault()
+func! pdv#PhpDocDefault()
 	" Line for the comment to begin
 	let commentline = line (".") - 1
     
