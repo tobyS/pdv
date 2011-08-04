@@ -469,5 +469,3 @@ func! pdv#PhpDocDefault()
 endfunc
 
 " }}}
-
-endif " user_commands
