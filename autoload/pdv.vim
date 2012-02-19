@@ -79,13 +79,31 @@ let g:pdv_re_indent = '^\s*'
 let g:pdv_cfg_BOL = "norm! o"
 let g:pdv_cfg_EOL = ""
 
+let s:mapping = []
+
+call add(s:mapping, {"regex": g:pdv_re_attribute, "function": function("pdv#ParseAttributeData"), "template": "attribute"})
 
 func! pdv#DocumentLine()
 	let l:docline = line(".")
-	let l:data = pdv#DocumentAttribute(getline(l:docline))
-	call append(line(".") - 1, pdv#ProcessTemplate(pdv#GetTemplate('attribute.tpl'), l:data))
+	let l:linecontent = getline(l:docline)
+
+
+	for l:parseconfig in s:mapping
+		if match(l:linecontent, l:parseconfig["regex"]) > -1
+			return pdv#Document(l:docline, l:parseconfig)
+		endif
+	endfor
+
+	throw "Cannot document line: No matching syntax found."
+endfunc
+
+func! pdv#Document(docline, config)
+	let l:Parsefunction = a:config["function"]
+	let l:data = l:Parsefunction(a:docline)
+	let l:template = pdv#GetTemplate(a:config["template"] . '.tpl')
+	call append(a:docline - 1, pdv#ProcessTemplate(l:template, l:data))
 	" TODO: Assumes phpDoc style comments (indent + 4).
-	call cursor(l:docline + 1, len(l:data["indent"]) + 4)
+	call cursor(a:docline + 1, len(l:data["indent"]) + 4)
 endfunc
 
 func! pdv#GetTemplate(filename)
@@ -106,12 +124,11 @@ func! pdv#ProcessTemplate(file, data)
 	return l:lines
 endfunc
 
-func! pdv#DocumentAttribute(text)
-	let l:data = {}
-	let l:matches = matchlist(a:text, g:pdv_re_attribute)
+func! pdv#ParseAttributeData(line)
+	let l:text = getline(a:line)
 
-	" return l:matches
-	" ['    public static $lala = 23;', '    ', 'public static ', 'static ', 'lala', '23;', '', '', '', '']
+	let l:data = {}
+	let l:matches = matchlist(l:text, g:pdv_re_attribute)
 
 	let l:data["indent"] = l:matches[1]
 	let l:data["scope"] = pdv#GetScope(l:matches[2])
