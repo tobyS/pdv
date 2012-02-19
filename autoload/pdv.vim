@@ -28,8 +28,6 @@
 " key combination. Hit this on the line where the element to document
 " resides and the doc block will be created directly above that line.
 
-" {{{ Globals
-
 " Default values
 let g:pdv_cfg_Type = "mixed"
 " let g:pdv_cfg_Package = "Framework"
@@ -81,7 +79,6 @@ let g:pdv_re_indent = '^\s*'
 let g:pdv_cfg_BOL = "norm! o"
 let g:pdv_cfg_EOL = ""
 
-" }}}  
 
 func! pdv#DocumentLine()
 	let l:docline = line(".")
