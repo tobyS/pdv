@@ -1,0 +1,113 @@
+<?php
+
+abstract class TestClass
+{
+
+    /**
+     * simplesFunc
+     *
+     */
+    public function simplesFunc () {
+    }
+
+    /**
+     * whiteSpaceNoParamsFunc
+     *
+     */
+    public function whiteSpaceNoParamsFunc(  )
+    {
+    }
+
+/**
+ * simpleParamFunc
+ *
+ * @param mixed $parameter
+ */
+public function simpleParamFunc( $parameter )
+{
+}
+
+    /**
+     * paramFuncIntDefault
+     *
+     * @param int $parameter
+     */
+    public function paramFuncIntDefault( $parameter = 23 ) {
+    }
+
+  /**
+   * multiParamsFuncFloatDefault
+   *
+   * @param int $someParam
+   * @param mixed $anotherParam
+   */
+  public function multiParamsFuncFloatDefault( $someParam = 42.5, $anotherParam )
+  {
+  }
+
+/**
+ * typeHintParamsFunc
+ *
+ * @param mixed $foo
+ * @param mixed $bar
+ */
+public function typeHintParamsFunc(array $foo, SomeClass $bar) {
+}
+
+    /**
+     * complexDefaultFunc
+     *
+     * @param array $foo
+     */
+    public function complexDefaultFunc( array $foo = array( 1, 2, 3 ) ) {
+    }
+
+    /**
+     * multiLineParamListFunc
+     *
+     * @param mixed $firstParam
+     * @param mixed $secondParam
+     * @param string $thirdParam
+     * @param int $fourthParam
+     */
+    public function multiLineParamListFunc(
+        FirstParam $firstParam = null,
+        SecondParam $secondParam,
+        array $thirdParam = array( "foo", array( "bar" ) ),
+        $fourthParam = 42.23
+    ) {
+    }
+
+    /**
+     * protectedFunc
+     *
+     * @param mixed $foo
+     * @param mixed $bar
+     */
+    protected function protectedFunc( $foo = null, array $bar )
+    {
+    }
+
+    /**
+     * privateStaticFunc
+     *
+     * @param mixed $foo
+     */
+    private static function privateStaticFunc( SomeClass $foo = null )
+    {
+    }
+
+    /**
+     * abstractPublicFunc
+     *
+     */
+    abstract public function abstractPublicFunc();
+
+    /**
+     * protectedAbstractFunc
+     *
+     * @param string $foo
+     */
+    protected abstract function protectedAbstractFunc($foo="bar");
+
+}

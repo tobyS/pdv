@@ -56,9 +56,9 @@ let g:pdv_re_abstract = '\(abstract\)'
 let g:pdv_re_final = '\(final\)'
 
 " [:space:]*(private|protected|public|static|abstract)*[:space:]+[:identifier:]+\([:params:]\)
-let g:pdv_re_func = '^\s*\([a-zA-Z ]*\)function\s\+\([^ (]\+\)\s*(\s*\(.*\)\s*)\s*[{;]\?$'
+let g:pdv_re_func = '^\(\s*\)\([a-zA-Z ]*\)function\s\+\([^ (]\+\)\s*('
 " [:typehint:]*[:space:]*$[:identifier]\([:space:]*=[:space:]*[:value:]\)?
-let g:pdv_re_param = ' *\([^ &]*\) *&\?\$\([A-Za-z_][A-Za-z0-9_]*\) *=\? *\(.*\)\?$'
+let g:pdv_re_param = ' *\([^ &]*\) *\(&\?\)\$\([A-Za-z_][A-Za-z0-9_]\+\)\s*=\?\s*\(.*\)\?$'
 
 " [:space:]*(private|protected|public\)[:space:]*$[:identifier:]+\([:space:]*=[:space:]*[:value:]+\)*;
 let g:pdv_re_attribute = '^\(\s*\)\(\(private\s*\|public\s*\|protected\s*\|static\s*\)\+\)\s*\$\([^ ;=]\+\)[ =]*\(.*\);\?$'
@@ -81,6 +81,7 @@ let g:pdv_cfg_EOL = ""
 
 let s:mapping = []
 
+call add(s:mapping, {"regex": g:pdv_re_func, "function": function("pdv#ParseFunctionData"), "template": "function"})
 call add(s:mapping, {"regex": g:pdv_re_attribute, "function": function("pdv#ParseAttributeData"), "template": "attribute"})
 
 func! pdv#DocumentLine()
@@ -111,17 +112,9 @@ func! pdv#GetTemplate(filename)
 endfunc
 
 func! pdv#ProcessTemplate(file, data)
-	let l:lines = readfile(a:file)
-	let l:i = 0
-	while l:i < len(l:lines)
-		for l:key in keys(a:data)
-			let l:regex = '{' . l:key . '}'
-			let l:lines[l:i] = substitute(l:lines[l:i], l:regex, a:data[l:key], 'g')
-		endfor
-		let l:lines[l:i] = a:data["indent"] . l:lines[l:i]
-		let l:i += 1
-	endwhile
-	return l:lines
+	let l:docblock = vmustache#RenderFile(a:file, a:data)
+	let l:lines = split(l:docblock, "\n")
+	return map(l:lines, '"' . a:data["indent"] . '" . v:val')
 endfunc
 
 func! pdv#ParseAttributeData(line)
@@ -137,6 +130,49 @@ func! pdv#ParseAttributeData(line)
 	" TODO: Cleanup ; and friends
 	let l:data["default"] = get(l:matches, 5, '')
 	let l:data["type"] = pdv#GuessType(l:data["default"])
+
+	echo l:data
+
+	return l:data
+endfunc
+
+func! pdv#ParseFunctionData(line)
+	let l:text = getline(a:line)
+
+	let l:data = pdv#ParseBasicFunctionData(l:text)
+	let l:data["parameters"] = []
+
+	let l:parameters = parparse#ParseParameters(a:line)
+
+	for l:param in l:parameters
+		call add(l:data["parameters"], pdv#ParseParameterData(l:param))
+	endfor
+
+	return l:data
+endfunc
+
+func! pdv#ParseParameterData(text)
+	let l:data = {}
+
+	let l:matches = matchlist(a:text, g:pdv_re_param)
+
+	let l:data["reference"] = (l:matches[2] == "&")
+	let l:data["name"] = l:matches[3]
+	let l:data["default"] = l:matches[4]
+	let l:data["type"] = pdv#GuessType(l:data["default"])
+
+	return l:data
+endfunc
+
+func! pdv#ParseBasicFunctionData(text)
+	let l:data = {}
+
+	let l:matches = matchlist(a:text, g:pdv_re_func)
+
+	let l:data["indent"] = l:matches[1]
+	let l:data["scope"] = pdv#GetScope(l:matches[2])
+	let l:data["static"] = pdv#GetStatic(l:matches[2])
+	let l:data["name"] = l:matches[3]
 
 	return l:data
 endfunc

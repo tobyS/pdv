@@ -1,5 +1,8 @@
 
 "test001.in" 
 "test001.in" 7L, 95C
+{'static': 1, 'scope': 'public', 'indent': '    ', 'type': 'int', 'default': '23;', 'name': 'lala'}
+{'static': 0, 'scope': 'public', 'indent': '    ', 'type': 'array', 'default': 'array( 1, 2, 3 );', 'name': 'bar'}
+{'static': 0, 'scope': 'protected', 'indent': '    ', 'type': 'mixed', 'default': ';', 'name': 'foo'}
 "~/dev/VIM/pdv/tests/test001.out" 
 "~/dev/VIM/pdv/tests/test001.out" [New] 22L, 250C written

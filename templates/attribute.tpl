@@ -1,5 +1,5 @@
 /**
- * {name}
+ * {{name}}
  *
- * @var {type}
+ * @var {{type}}
  */
