@@ -1,0 +1,63 @@
+<?php
+
+/**
+ * Class: SimplestClass
+ *
+ */
+class SimplestClass {
+}
+
+/**
+ * Class: DerivedClass
+ *
+ * @see BaseClass
+ */
+class DerivedClass extends BaseClass
+{
+}
+
+/**
+ * Class: ImplementingClass
+ *
+ * @see InterfaceA
+ * @see InterfaceB
+ */
+class ImplementingClass implements InterfaceA, InterfaceB
+{
+}
+
+    /**
+     * Class: AbstractClass
+     *
+     * @abstract
+     */
+    abstract class AbstractClass {
+    }
+
+/**
+ * Class: FinalClass
+ *
+ * @final
+ */
+final class FinalClass
+{
+}
+
+
+/**
+ * Class: AllTogether
+ *
+ * @see InterfaceA
+ * @see ABaseClass
+ * @abstract
+ */
+abstract class AllTogether extends ABaseClass implements InterfaceA {
+}
+
+  /**
+   * Class: FancyFormat
+   *
+   * @see FancyWhitespace
+   */
+  class             FancyFormat      extends FancyWhitespace            {
+  }
