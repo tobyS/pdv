@@ -27,9 +27,9 @@
 " You can use this script by mapping the function PhpDoc() to any
 " key combination. Hit this on the line where the element to document
 " resides and the doc block will be created directly above that line.
-"
-" TODO: Parse "abstract"
-" TODO: Parse "final"
+
+let s:old_cpo = &cpo
+set cpo&vim
 
 " Default values
 let g:pdv_cfg_Type = "mixed"
@@ -82,11 +82,17 @@ let g:pdv_re_indent = '^\s*'
 let g:pdv_cfg_BOL = "norm! o"
 let g:pdv_cfg_EOL = ""
 
-let s:mapping = []
-
-call add(s:mapping, {"regex": g:pdv_re_func, "function": function("pdv#ParseFunctionData"), "template": "function"})
-call add(s:mapping, {"regex": g:pdv_re_attribute, "function": function("pdv#ParseAttributeData"), "template": "attribute"})
-call add(s:mapping, {"regex": g:pdv_re_class, "function": function("pdv#ParseClassData"), "template": "class"})
+let s:mapping = [
+    \ {"regex": g:pdv_re_func,
+    \  "function": function("pdv#ParseFunctionData"),
+    \  "template": "function"},
+    \ {"regex": g:pdv_re_attribute,
+    \  "function": function("pdv#ParseAttributeData"),
+    \  "template": "attribute"},
+    \ {"regex": g:pdv_re_class,
+    \  "function": function("pdv#ParseClassData"),
+    \  "template": "class"},
+\ ]
 
 func! pdv#DocumentLine()
 	let l:docline = line(".")
@@ -272,3 +278,5 @@ func! pdv#GuessType( typeString )
 	endif
 	return l:type
 endfunc
+
+let &cpo = s:old_cpo
