@@ -27,6 +27,9 @@
 " You can use this script by mapping the function PhpDoc() to any
 " key combination. Hit this on the line where the element to document
 " resides and the doc block will be created directly above that line.
+"
+" TODO: Parse "abstract"
+" TODO: Parse "final"
 
 " Default values
 let g:pdv_cfg_Type = "mixed"
@@ -64,7 +67,7 @@ let g:pdv_re_param = ' *\([^ &]*\) *\(&\?\)\$\([A-Za-z_][A-Za-z0-9_]\+\)\s*=\?\s
 let g:pdv_re_attribute = '^\(\s*\)\(\(private\s*\|public\s*\|protected\s*\|static\s*\)\+\)\s*\$\([^ ;=]\+\)[ =]*\(.*\);\?$'
 
 " [:spacce:]*(abstract|final|)[:space:]*(class|interface)+[:space:]+\(extends ([:identifier:])\)?[:space:]*\(implements ([:identifier:][, ]*)+\)?
-let g:pdv_re_class = '^\s*\([a-zA-Z]*\)\s*\(interface\|class\)\s*\([^ ]\+\)\s*\(extends\)\?\s*\([a-zA-Z0-9]*\)\?\s*\(implements*\)\? *\([a-zA-Z0-9_ ,]*\)\?.*$'
+let g:pdv_re_class = '^\(\s*\)\(.*\)\s*\(interface\|class\)\s*\(\S\+\)\s*\([^{]*\){\?$'
 
 let g:pdv_re_array  = "^array *(.*"
 " FIXME (retest regex!)
@@ -83,6 +86,7 @@ let s:mapping = []
 
 call add(s:mapping, {"regex": g:pdv_re_func, "function": function("pdv#ParseFunctionData"), "template": "function"})
 call add(s:mapping, {"regex": g:pdv_re_attribute, "function": function("pdv#ParseAttributeData"), "template": "attribute"})
+call add(s:mapping, {"regex": g:pdv_re_class, "function": function("pdv#ParseClassData"), "template": "class"})
 
 func! pdv#DocumentLine()
 	let l:docline = line(".")
@@ -115,6 +119,59 @@ func! pdv#ProcessTemplate(file, data)
 	let l:docblock = vmustache#RenderFile(a:file, a:data)
 	let l:lines = split(l:docblock, "\n")
 	return map(l:lines, '"' . a:data["indent"] . '" . v:val')
+endfunc
+
+func! pdv#ParseClassData(line)
+	let l:text = getline(a:line)
+
+	let l:data = {}
+	let l:matches = matchlist(l:text, g:pdv_re_class)
+
+	let l:data["indent"] = matches[1]
+	let l:data["name"] = matches[4]
+	let l:data["interface"] = matches[3] == "interface"
+	let l:data["abstract"] = pdv#GetAbstract(matches[2])
+	let l:data["final"] = pdv#GetFinal(matches[2])
+
+	if (!empty(matches[5]))
+		call pdv#ParseExtendsImplements(l:data, l:matches[5])
+	endif
+	" TODO: abstract? final?
+
+	return l:data
+endfunc
+
+func! pdv#ParseExtendsImplements(data, text)
+	let l:tokens = split(a:text, '\(\s*,\s*\|\s\+\)')
+
+	let l:extends = 0
+	for l:token in l:tokens
+		if (tolower(l:token) == "extends")
+			let l:extends = 1
+			continue
+		endif
+		if l:extends
+			let a:data["parent"] = {"name": l:token}
+			break
+		endif
+	endfor
+
+	let l:implements = 0
+	let l:interfaces = []
+	for l:token in l:tokens
+		if (tolower(l:token) == "implements")
+			let l:implements = 1
+			continue
+		endif
+		if (l:implements && tolower(l:token) == "extends")
+			break
+		endif
+		if (l:implements)
+			call add(l:interfaces, {"name": l:token})
+		endif
+	endfor
+	let a:data["interfaces"] = l:interfaces
+
 endfunc
 
 func! pdv#ParseAttributeData(line)
@@ -182,7 +239,15 @@ func! pdv#GetScope( modifiers )
 endfunc
 
 func! pdv#GetStatic( modifiers )
-	return matchstr(a:modifiers, g:pdv_re_static) == 'static'
+	return tolower(a:modifiers) =~ g:pdv_re_static
+endfunc
+
+func! pdv#GetAbstract( modifiers )
+	return tolower(a:modifiers) =~ g:pdv_re_abstract
+endfunc
+
+func! pdv#GetFinal( modifiers )
+	return tolower(a:modifiers) =~ g:pdv_re_final
 endfunc
 
 func! pdv#GuessType( typeString )
