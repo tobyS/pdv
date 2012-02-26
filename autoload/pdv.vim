@@ -31,65 +31,52 @@
 let s:old_cpo = &cpo
 set cpo&vim
 
-" Default values
-let g:pdv_cfg_Type = "mixed"
-" let g:pdv_cfg_Package = "Framework"
-" let g:pdv_cfg_Package = "Webdav"
-let g:pdv_cfg_Package = "qaVoice"
-let g:pdv_cfg_Version = ""
-let g:pdv_cfg_Author = "Tobias Schlitt <toby@qafoo.com>"
-let g:pdv_cfg_Copyright = "Copyright (C) 2010 Qafoo GmbH. All rights reserved."
-let g:pdv_cfg_License = ""
-
-let g:pdv_cfg_ReturnVal = "void"
-
 "
 " Regular expressions 
 " 
 
-let g:pdv_re_comment = ' *\*/ *'
+let s:comment = ' *\*/ *'
+
+let s:regex = {}
 
 " (private|protected|public)
-let g:pdv_re_scope = '\(private\|protected\|public\)'
+let s:regex["scope"] = '\(private\|protected\|public\)'
 " (static)
-let g:pdv_re_static = '\(static\)'
+let s:regex["static"] = '\(static\)'
 " (abstract)
-let g:pdv_re_abstract = '\(abstract\)'
+let s:regex["abstract"] = '\(abstract\)'
 " (final)
-let g:pdv_re_final = '\(final\)'
+let s:regex["final"] = '\(final\)'
 
 " [:space:]*(private|protected|public|static|abstract)*[:space:]+[:identifier:]+\([:params:]\)
-let g:pdv_re_func = '^\(\s*\)\([a-zA-Z ]*\)function\s\+\([^ (]\+\)\s*('
+let s:regex["function"] = '^\(\s*\)\([a-zA-Z ]*\)function\s\+\([^ (]\+\)\s*('
 " [:typehint:]*[:space:]*$[:identifier]\([:space:]*=[:space:]*[:value:]\)?
-let g:pdv_re_param = ' *\([^ &]*\)\s*\(&\?\)\$\([^ =)]\+\)\s*\(=\s*\(.*\)\)\?$'
+let s:regex["param"] = ' *\([^ &]*\)\s*\(&\?\)\$\([^ =)]\+\)\s*\(=\s*\(.*\)\)\?$'
 
 " [:space:]*(private|protected|public\)[:space:]*$[:identifier:]+\([:space:]*=[:space:]*[:value:]+\)*;
-let g:pdv_re_attribute = '^\(\s*\)\(\(private\s*\|public\s*\|protected\s*\|static\s*\)\+\)\s*\$\([^ ;=]\+\)[ =]*\(.*\);\?$'
+let s:regex["attribute"] = '^\(\s*\)\(\(private\s*\|public\s*\|protected\s*\|static\s*\)\+\)\s*\$\([^ ;=]\+\)[ =]*\(.*\);\?$'
 
 " [:spacce:]*(abstract|final|)[:space:]*(class|interface)+[:space:]+\(extends ([:identifier:])\)?[:space:]*\(implements ([:identifier:][, ]*)+\)?
-let g:pdv_re_class = '^\(\s*\)\(.*\)\s*\(interface\|class\)\s*\(\S\+\)\s*\([^{]*\){\?$'
+let s:regex["class"] = '^\(\s*\)\(.*\)\s*\(interface\|class\)\s*\(\S\+\)\s*\([^{]*\){\?$'
 
-let g:pdv_re_array  = "^array *(.*"
-" FIXME (retest regex!)
-let g:pdv_re_float  = '^[0-9]*\.[0-9]\+'
-let g:pdv_re_int    = '^[0-9]\+'
-let g:pdv_re_string = "['\"].*"
-let g:pdv_re_bool = "\(true\|false\)"
+let s:regex["types"] = {}
 
-let g:pdv_re_indent = '^\s*'
+let s:regex["types"]["array"]  = "^array *(.*"
+let s:regex["types"]["float"]  = '^[0-9]*\.[0-9]\+'
+let s:regex["types"]["int"]    = '^[0-9]\+'
+let s:regex["types"]["string"] = "['\"].*"
+let s:regex["types"]["bool"] = "\(true\|false\)"
 
-" Shortcuts for editing the text:
-let g:pdv_cfg_BOL = "norm! o"
-let g:pdv_cfg_EOL = ""
+let s:regex["indent"] = '^\s*'
 
 let s:mapping = [
-    \ {"regex": g:pdv_re_func,
+    \ {"regex": s:regex["function"],
     \  "function": function("pdv#ParseFunctionData"),
     \  "template": "function"},
-    \ {"regex": g:pdv_re_attribute,
+    \ {"regex": s:regex["attribute"],
     \  "function": function("pdv#ParseAttributeData"),
     \  "template": "attribute"},
-    \ {"regex": g:pdv_re_class,
+    \ {"regex": s:regex["class"],
     \  "function": function("pdv#ParseClassData"),
     \  "template": "class"},
 \ ]
@@ -131,7 +118,7 @@ func! pdv#ParseClassData(line)
 	let l:text = getline(a:line)
 
 	let l:data = {}
-	let l:matches = matchlist(l:text, g:pdv_re_class)
+	let l:matches = matchlist(l:text, s:regex["class"])
 
 	let l:data["indent"] = matches[1]
 	let l:data["name"] = matches[4]
@@ -184,7 +171,7 @@ func! pdv#ParseAttributeData(line)
 	let l:text = getline(a:line)
 
 	let l:data = {}
-	let l:matches = matchlist(l:text, g:pdv_re_attribute)
+	let l:matches = matchlist(l:text, s:regex["attribute"])
 
 	let l:data["indent"] = l:matches[1]
 	let l:data["scope"] = pdv#GetScope(l:matches[2])
@@ -215,7 +202,7 @@ endfunc
 func! pdv#ParseParameterData(text)
 	let l:data = {}
 
-	let l:matches = matchlist(a:text, g:pdv_re_param)
+	let l:matches = matchlist(a:text, s:regex["param"])
 
 	let l:data["reference"] = (l:matches[2] == "&")
 	let l:data["name"] = l:matches[3]
@@ -233,7 +220,7 @@ endfunc
 func! pdv#ParseBasicFunctionData(text)
 	let l:data = {}
 
-	let l:matches = matchlist(a:text, g:pdv_re_func)
+	let l:matches = matchlist(a:text, s:regex["function"])
 
 	let l:data["indent"] = l:matches[1]
 	let l:data["scope"] = pdv#GetScope(l:matches[2])
@@ -244,35 +231,35 @@ func! pdv#ParseBasicFunctionData(text)
 endfunc
 
 func! pdv#GetScope( modifiers )
-	return matchstr(a:modifiers, g:pdv_re_scope)
+	return matchstr(a:modifiers, s:regex["scope"])
 endfunc
 
 func! pdv#GetStatic( modifiers )
-	return tolower(a:modifiers) =~ g:pdv_re_static
+	return tolower(a:modifiers) =~ s:regex["static"]
 endfunc
 
 func! pdv#GetAbstract( modifiers )
-	return tolower(a:modifiers) =~ g:pdv_re_abstract
+	return tolower(a:modifiers) =~ s:regex["abstract"]
 endfunc
 
 func! pdv#GetFinal( modifiers )
-	return tolower(a:modifiers) =~ g:pdv_re_final
+	return tolower(a:modifiers) =~ s:regex["final"]
 endfunc
 
 func! pdv#GuessType( typeString )
-	if a:typeString =~ g:pdv_re_array
+	if a:typeString =~ s:regex["types"]["array"]
 		return "array"
 	endif
-	if a:typeString =~ g:pdv_re_float
+	if a:typeString =~ s:regex["types"]["float"]
 		return "float"
 	endif
-	if a:typeString =~ g:pdv_re_int
+	if a:typeString =~ s:regex["types"]["int"]
 		return "int"
 	endif
-	if a:typeString =~ g:pdv_re_string
+	if a:typeString =~ s:regex["types"]["string"]
 		return "string"
 	endif
-	if a:typeString =~ g:pdv_re_bool
+	if a:typeString =~ s:regex["types"]["bool"]
 		return "bool"
 	endif
 endfunc
