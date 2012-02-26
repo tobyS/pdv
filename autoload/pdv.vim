@@ -61,7 +61,7 @@ let g:pdv_re_final = '\(final\)'
 " [:space:]*(private|protected|public|static|abstract)*[:space:]+[:identifier:]+\([:params:]\)
 let g:pdv_re_func = '^\(\s*\)\([a-zA-Z ]*\)function\s\+\([^ (]\+\)\s*('
 " [:typehint:]*[:space:]*$[:identifier]\([:space:]*=[:space:]*[:value:]\)?
-let g:pdv_re_param = ' *\([^ &]*\) *\(&\?\)\$\([A-Za-z_][A-Za-z0-9_]\+\)\s*=\?\s*\(.*\)\?$'
+let g:pdv_re_param = ' *\([^ &]*\)\s*\(&\?\)\$\([^ =)]\+\)\s*\(=\s*\(.*\)\)\?$'
 
 " [:space:]*(private|protected|public\)[:space:]*$[:identifier:]+\([:space:]*=[:space:]*[:value:]+\)*;
 let g:pdv_re_attribute = '^\(\s*\)\(\(private\s*\|public\s*\|protected\s*\|static\s*\)\+\)\s*\$\([^ ;=]\+\)[ =]*\(.*\);\?$'
@@ -139,7 +139,7 @@ func! pdv#ParseClassData(line)
 	let l:data["abstract"] = pdv#GetAbstract(matches[2])
 	let l:data["final"] = pdv#GetFinal(matches[2])
 
-	if (!empty(matches[5]))
+	if (!empty(l:matches[5]))
 		call pdv#ParseExtendsImplements(l:data, l:matches[5])
 	endif
 	" TODO: abstract? final?
@@ -194,8 +194,6 @@ func! pdv#ParseAttributeData(line)
 	let l:data["default"] = get(l:matches, 5, '')
 	let l:data["type"] = pdv#GuessType(l:data["default"])
 
-	echo l:data
-
 	return l:data
 endfunc
 
@@ -221,8 +219,13 @@ func! pdv#ParseParameterData(text)
 
 	let l:data["reference"] = (l:matches[2] == "&")
 	let l:data["name"] = l:matches[3]
-	let l:data["default"] = l:matches[4]
-	let l:data["type"] = pdv#GuessType(l:data["default"])
+	let l:data["default"] = l:matches[5]
+
+	if (!empty(l:matches[1]))
+		let l:data["type"] = l:matches[1]
+	elseif (!empty(l:data["default"]))
+		let l:data["type"] = pdv#GuessType(l:data["default"])
+	endif
 
 	return l:data
 endfunc
@@ -257,26 +260,21 @@ func! pdv#GetFinal( modifiers )
 endfunc
 
 func! pdv#GuessType( typeString )
-	let l:type = ""
 	if a:typeString =~ g:pdv_re_array
-		let l:type = "array"
+		return "array"
 	endif
 	if a:typeString =~ g:pdv_re_float
-		let l:type = "float"
+		return "float"
 	endif
 	if a:typeString =~ g:pdv_re_int
-		let l:type = "int"
+		return "int"
 	endif
 	if a:typeString =~ g:pdv_re_string
-		let l:type = "string"
+		return "string"
 	endif
 	if a:typeString =~ g:pdv_re_bool
-		let l:type = "bool"
+		return "bool"
 	endif
-	if l:type == ""
-		let l:type = g:pdv_cfg_Type
-	endif
-	return l:type
 endfunc
 
 let &cpo = s:old_cpo

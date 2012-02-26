@@ -30,7 +30,7 @@ public function typeHintParamsFunc(array $foo, SomeClass $bar) {
     public function multiLineParamListFunc(
         FirstParam $firstParam = null,
         SecondParam $secondParam,
-        array $thirdParam = array( "foo", array( "bar" ) ),
+        $thirdParam = array( "foo", array( "bar" ) ),
         $fourthParam = 42.23
     ) {
     }

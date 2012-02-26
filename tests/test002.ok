@@ -38,7 +38,7 @@ public function simpleParamFunc( $parameter )
   /**
    * multiParamsFuncFloatDefault
    *
-   * @param int $someParam
+   * @param float $someParam
    * @param mixed $anotherParam
    */
   public function multiParamsFuncFloatDefault( $someParam = 42.5, $anotherParam )
@@ -48,8 +48,8 @@ public function simpleParamFunc( $parameter )
 /**
  * typeHintParamsFunc
  *
- * @param mixed $foo
- * @param mixed $bar
+ * @param array $foo
+ * @param SomeClass $bar
  */
 public function typeHintParamsFunc(array $foo, SomeClass $bar) {
 }
@@ -65,15 +65,15 @@ public function typeHintParamsFunc(array $foo, SomeClass $bar) {
     /**
      * multiLineParamListFunc
      *
-     * @param mixed $firstParam
-     * @param mixed $secondParam
-     * @param string $thirdParam
-     * @param int $fourthParam
+     * @param FirstParam $firstParam
+     * @param SecondParam $secondParam
+     * @param array $thirdParam
+     * @param float $fourthParam
      */
     public function multiLineParamListFunc(
         FirstParam $firstParam = null,
         SecondParam $secondParam,
-        array $thirdParam = array( "foo", array( "bar" ) ),
+        $thirdParam = array( "foo", array( "bar" ) ),
         $fourthParam = 42.23
     ) {
     }
@@ -82,7 +82,7 @@ public function typeHintParamsFunc(array $foo, SomeClass $bar) {
      * protectedFunc
      *
      * @param mixed $foo
-     * @param mixed $bar
+     * @param array $bar
      */
     protected function protectedFunc( $foo = null, array $bar )
     {
@@ -91,7 +91,7 @@ public function typeHintParamsFunc(array $foo, SomeClass $bar) {
     /**
      * privateStaticFunc
      *
-     * @param mixed $foo
+     * @param SomeClass $foo
      */
     private static function privateStaticFunc( SomeClass $foo = null )
     {

@@ -1,5 +1,5 @@
 /**
  * {{name}}
  *{{#parameters}}
- * @param {{type}} ${{name}}{{/parameters}}
+ * @param {{type}}{{^type}}mixed{{/type}} ${{name}}{{/parameters}}
  */
