@@ -95,13 +95,38 @@ func! pdv#DocumentLine()
 	throw "Cannot document line: No matching syntax found."
 endfunc
 
+func! pdv#DocumentWithSnip()
+	let l:docline = line(".")
+	let l:linecontent = getline(l:docline)
+
+
+	for l:parseconfig in s:mapping
+		if match(l:linecontent, l:parseconfig["regex"]) > -1
+			let l:docdata = pdv#GenerateDocumentation(l:docline, l:parseconfig)
+			let l:docblock = join(l:docdata["docblock"], "\n")
+			echo l:docblock
+			call MakeSnip(&ft, "pdv_doc_snip", l:docblock)
+			let l:snipline = "pdv_doc_snip"
+			call append(l:docline - 1, [l:snipline])
+			call cursor(l:docline, len(l:snipline))
+			exe "normal! a\<c-r>=TriggerSnippet()\<cr>"
+		endif
+	endfor
+endfunc
+
 func! pdv#Document(docline, config)
+	let l:docdata = pdv#GenerateDocumentation(a:docline, a:config)
+	call append(a:docline - 1, l:docdata["docblock"])
+	" TODO: Assumes phpDoc style comments (indent + 4).
+	call cursor(a:docline + 1, len(l:docdata["data"]["indent"]) + 4)
+endfunc
+
+func! pdv#GenerateDocumentation(docline, config)
 	let l:Parsefunction = a:config["function"]
 	let l:data = l:Parsefunction(a:docline)
 	let l:template = pdv#GetTemplate(a:config["template"] . '.tpl')
-	call append(a:docline - 1, pdv#ProcessTemplate(l:template, l:data))
-	" TODO: Assumes phpDoc style comments (indent + 4).
-	call cursor(a:docline + 1, len(l:data["indent"]) + 4)
+	return {"docblock": pdv#ProcessTemplate(l:template, l:data),
+		\ "data": l:data}
 endfunc
 
 func! pdv#GetTemplate(filename)
