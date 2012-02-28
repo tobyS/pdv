@@ -5,7 +5,7 @@ let doclines = [25, 22, 17, 14, 10, 6, 3]
 for line in doclines
 	call cursor(line, 42)
 	echo "Docline: " . line
-	call pdv#DocumentLine()
+	call pdv#DocumentCurrentLine()
 endfor
 
 call vimtest#SaveOut()

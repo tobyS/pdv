@@ -81,52 +81,55 @@ let s:mapping = [
     \  "template": "class"},
 \ ]
 
-func! pdv#DocumentLine()
+func! pdv#DocumentCurrentLine()
 	let l:docline = line(".")
 	let l:linecontent = getline(l:docline)
-
-
-	for l:parseconfig in s:mapping
-		if match(l:linecontent, l:parseconfig["regex"]) > -1
-			return pdv#Document(l:docline, l:parseconfig)
-		endif
-	endfor
+	return pdv#DocumentLine(l:docline)
 
 	throw "Cannot document line: No matching syntax found."
 endfunc
 
+func! pdv#DocumentLine(lineno)
+	let l:parseconfig = pdv#DetermineParseConfig(getline(a:lineno))
+	let l:data = pdv#ParseDocData(a:lineno, l:parseconfig)
+	let l:docblock = pdv#GenerateDocumentation(l:parseconfig, l:data)
+
+	call append(a:lineno - 1, pdv#ApplyIndent(l:docblock, l:data["indent"]))
+	" TODO: Assumes phpDoc style comments (indent + 4).
+	call cursor(a:lineno + 1, len(l:data["indent"]) + 4)
+endfunc
+
 func! pdv#DocumentWithSnip()
-	let l:docline = line(".")
-	let l:linecontent = getline(l:docline)
+	let l:parseconfig = pdv#DetermineParseConfig(getline(a:lineno))
+	let l:data = pdv#ParseDocData(a:lineno, l:parseconfig)
+	let l:docblock = pdv#GenerateDocumentation(a:parseconfig, l:data)
 
+	let l:snipy = "pdv_doc_snip"
+	call MakeSnip(&ft, l:snipy, l:docblock)
 
+	call append(l:docline - 1, [l:snipy])
+	call cursor(l:docline, len(l:snipy))
+
+	exe "normal! a\<c-r>=TriggerSnippet()\<cr>"
+endfunc
+
+func! pdv#DetermineParseConfig(line)
 	for l:parseconfig in s:mapping
-		if match(l:linecontent, l:parseconfig["regex"]) > -1
-			let l:docdata = pdv#GenerateDocumentation(l:docline, l:parseconfig)
-			let l:docblock = join(l:docdata["docblock"], "\n")
-			echo l:docblock
-			call MakeSnip(&ft, "pdv_doc_snip", l:docblock)
-			let l:snipline = "pdv_doc_snip"
-			call append(l:docline - 1, [l:snipline])
-			call cursor(l:docline, len(l:snipline))
-			exe "normal! a\<c-r>=TriggerSnippet()\<cr>"
+		if match(a:line, l:parseconfig["regex"]) > -1
+			return l:parseconfig
 		endif
 	endfor
+	throw "Could not detect parse config for '" . a:line . "'"
 endfunc
 
-func! pdv#Document(docline, config)
-	let l:docdata = pdv#GenerateDocumentation(a:docline, a:config)
-	call append(a:docline - 1, l:docdata["docblock"])
-	" TODO: Assumes phpDoc style comments (indent + 4).
-	call cursor(a:docline + 1, len(l:docdata["data"]["indent"]) + 4)
-endfunc
-
-func! pdv#GenerateDocumentation(docline, config)
+func! pdv#ParseDocData(docline, config)
 	let l:Parsefunction = a:config["function"]
-	let l:data = l:Parsefunction(a:docline)
+	return l:Parsefunction(a:docline)
+endfunc
+
+func! pdv#GenerateDocumentation(config, data)
 	let l:template = pdv#GetTemplate(a:config["template"] . '.tpl')
-	return {"docblock": pdv#ProcessTemplate(l:template, l:data),
-		\ "data": l:data}
+	return pdv#ProcessTemplate(l:template, a:data)
 endfunc
 
 func! pdv#GetTemplate(filename)
@@ -134,9 +137,12 @@ func! pdv#GetTemplate(filename)
 endfunc
 
 func! pdv#ProcessTemplate(file, data)
-	let l:docblock = vmustache#RenderFile(a:file, a:data)
-	let l:lines = split(l:docblock, "\n")
-	return map(l:lines, '"' . a:data["indent"] . '" . v:val')
+	return vmustache#RenderFile(a:file, a:data)
+endfunc
+
+func! pdv#ApplyIndent(text, indent)
+	let l:lines = split(a:text, "\n")
+	return map(l:lines, '"' . a:indent . '" . v:val')
 endfunc
 
 func! pdv#ParseClassData(line)
