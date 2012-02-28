@@ -84,25 +84,23 @@ let s:mapping = [
 func! pdv#DocumentCurrentLine()
 	let l:docline = line(".")
 	let l:linecontent = getline(l:docline)
-	return pdv#DocumentLine(l:docline)
-
-	throw "Cannot document line: No matching syntax found."
+	call pdv#DocumentLine(l:docline)
 endfunc
 
 func! pdv#DocumentLine(lineno)
-	let l:parseconfig = pdv#DetermineParseConfig(getline(a:lineno))
-	let l:data = pdv#ParseDocData(a:lineno, l:parseconfig)
-	let l:docblock = pdv#GenerateDocumentation(l:parseconfig, l:data)
+	let l:parseconfig = s:DetermineParseConfig(getline(a:lineno))
+	let l:data = s:ParseDocData(a:lineno, l:parseconfig)
+	let l:docblock = s:GenerateDocumentation(l:parseconfig, l:data)
 
-	call append(a:lineno - 1, pdv#ApplyIndent(l:docblock, l:data["indent"]))
+	call append(a:lineno - 1, s:ApplyIndent(l:docblock, l:data["indent"]))
 	" TODO: Assumes phpDoc style comments (indent + 4).
 	call cursor(a:lineno + 1, len(l:data["indent"]) + 4)
 endfunc
 
 func! pdv#DocumentWithSnip()
-	let l:parseconfig = pdv#DetermineParseConfig(getline(a:lineno))
-	let l:data = pdv#ParseDocData(a:lineno, l:parseconfig)
-	let l:docblock = pdv#GenerateDocumentation(a:parseconfig, l:data)
+	let l:parseconfig = s:DetermineParseConfig(getline(a:lineno))
+	let l:data = s:ParseDocData(a:lineno, l:parseconfig)
+	let l:docblock = s:GenerateDocumentation(a:parseconfig, l:data)
 
 	let l:snipy = "pdv_doc_snip"
 	call MakeSnip(&ft, l:snipy, l:docblock)
@@ -113,7 +111,7 @@ func! pdv#DocumentWithSnip()
 	exe "normal! a\<c-r>=TriggerSnippet()\<cr>"
 endfunc
 
-func! pdv#DetermineParseConfig(line)
+func! s:DetermineParseConfig(line)
 	for l:parseconfig in s:mapping
 		if match(a:line, l:parseconfig["regex"]) > -1
 			return l:parseconfig
@@ -122,25 +120,25 @@ func! pdv#DetermineParseConfig(line)
 	throw "Could not detect parse config for '" . a:line . "'"
 endfunc
 
-func! pdv#ParseDocData(docline, config)
+func! s:ParseDocData(docline, config)
 	let l:Parsefunction = a:config["function"]
 	return l:Parsefunction(a:docline)
 endfunc
 
-func! pdv#GenerateDocumentation(config, data)
-	let l:template = pdv#GetTemplate(a:config["template"] . '.tpl')
-	return pdv#ProcessTemplate(l:template, a:data)
+func! s:GenerateDocumentation(config, data)
+	let l:template = s:GetTemplate(a:config["template"] . '.tpl')
+	return s:ProcessTemplate(l:template, a:data)
 endfunc
 
-func! pdv#GetTemplate(filename)
+func! s:GetTemplate(filename)
 	return g:pdv_template_dir . '/' . a:filename
 endfunc
 
-func! pdv#ProcessTemplate(file, data)
+func! s:ProcessTemplate(file, data)
 	return vmustache#RenderFile(a:file, a:data)
 endfunc
 
-func! pdv#ApplyIndent(text, indent)
+func! s:ApplyIndent(text, indent)
 	let l:lines = split(a:text, "\n")
 	return map(l:lines, '"' . a:indent . '" . v:val')
 endfunc
@@ -154,18 +152,18 @@ func! pdv#ParseClassData(line)
 	let l:data["indent"] = matches[1]
 	let l:data["name"] = matches[4]
 	let l:data["interface"] = matches[3] == "interface"
-	let l:data["abstract"] = pdv#GetAbstract(matches[2])
-	let l:data["final"] = pdv#GetFinal(matches[2])
+	let l:data["abstract"] = s:GetAbstract(matches[2])
+	let l:data["final"] = s:GetFinal(matches[2])
 
 	if (!empty(l:matches[5]))
-		call pdv#ParseExtendsImplements(l:data, l:matches[5])
+		call s:ParseExtendsImplements(l:data, l:matches[5])
 	endif
 	" TODO: abstract? final?
 
 	return l:data
 endfunc
 
-func! pdv#ParseExtendsImplements(data, text)
+func! s:ParseExtendsImplements(data, text)
 	let l:tokens = split(a:text, '\(\s*,\s*\|\s\+\)')
 
 	let l:extends = 0
@@ -205,12 +203,12 @@ func! pdv#ParseAttributeData(line)
 	let l:matches = matchlist(l:text, s:regex["attribute"])
 
 	let l:data["indent"] = l:matches[1]
-	let l:data["scope"] = pdv#GetScope(l:matches[2])
-	let l:data["static"] = pdv#GetStatic(l:matches[2])
+	let l:data["scope"] = s:GetScope(l:matches[2])
+	let l:data["static"] = s:GetStatic(l:matches[2])
 	let l:data["name"] = l:matches[4]
 	" TODO: Cleanup ; and friends
 	let l:data["default"] = get(l:matches, 5, '')
-	let l:data["type"] = pdv#GuessType(l:data["default"])
+	let l:data["type"] = s:GuessType(l:data["default"])
 
 	return l:data
 endfunc
@@ -218,19 +216,19 @@ endfunc
 func! pdv#ParseFunctionData(line)
 	let l:text = getline(a:line)
 
-	let l:data = pdv#ParseBasicFunctionData(l:text)
+	let l:data = s:ParseBasicFunctionData(l:text)
 	let l:data["parameters"] = []
 
 	let l:parameters = parparse#ParseParameters(a:line)
 
 	for l:param in l:parameters
-		call add(l:data["parameters"], pdv#ParseParameterData(l:param))
+		call add(l:data["parameters"], s:ParseParameterData(l:param))
 	endfor
 
 	return l:data
 endfunc
 
-func! pdv#ParseParameterData(text)
+func! s:ParseParameterData(text)
 	let l:data = {}
 
 	let l:matches = matchlist(a:text, s:regex["param"])
@@ -242,42 +240,42 @@ func! pdv#ParseParameterData(text)
 	if (!empty(l:matches[1]))
 		let l:data["type"] = l:matches[1]
 	elseif (!empty(l:data["default"]))
-		let l:data["type"] = pdv#GuessType(l:data["default"])
+		let l:data["type"] = s:GuessType(l:data["default"])
 	endif
 
 	return l:data
 endfunc
 
-func! pdv#ParseBasicFunctionData(text)
+func! s:ParseBasicFunctionData(text)
 	let l:data = {}
 
 	let l:matches = matchlist(a:text, s:regex["function"])
 
 	let l:data["indent"] = l:matches[1]
-	let l:data["scope"] = pdv#GetScope(l:matches[2])
-	let l:data["static"] = pdv#GetStatic(l:matches[2])
+	let l:data["scope"] = s:GetScope(l:matches[2])
+	let l:data["static"] = s:GetStatic(l:matches[2])
 	let l:data["name"] = l:matches[3]
 
 	return l:data
 endfunc
 
-func! pdv#GetScope( modifiers )
+func! s:GetScope( modifiers )
 	return matchstr(a:modifiers, s:regex["scope"])
 endfunc
 
-func! pdv#GetStatic( modifiers )
+func! s:GetStatic( modifiers )
 	return tolower(a:modifiers) =~ s:regex["static"]
 endfunc
 
-func! pdv#GetAbstract( modifiers )
+func! s:GetAbstract( modifiers )
 	return tolower(a:modifiers) =~ s:regex["abstract"]
 endfunc
 
-func! pdv#GetFinal( modifiers )
+func! s:GetFinal( modifiers )
 	return tolower(a:modifiers) =~ s:regex["final"]
 endfunc
 
-func! pdv#GuessType( typeString )
+func! s:GuessType( typeString )
 	if a:typeString =~ s:regex["types"]["array"]
 		return "array"
 	endif
