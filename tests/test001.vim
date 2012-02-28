@@ -1,9 +1,11 @@
+let g:pdv_template_dir = expand("%:p:h") . "/templates"
+
+source helpers/functions.vim
+
 edit test001.in
-call cursor(7, 100)
-call pdv#DocumentCurrentLine()
-call cursor(5, 100)
-call pdv#DocumentCurrentLine()
-call cursor(3, 100)
-call pdv#DocumentCurrentLine()
+
+let doclines = [7, 5, 3]
+call DocumentLines(doclines)
+
 call vimtest#SaveOut()
 call vimtest#Quit()
