@@ -1,2 +1,2 @@
 #!/bin/bash
-runVimTests.sh --source `pwd`/autoload/pdv.vim tests/
+runVimTests.sh --source `pwd`/autoload/pdv.vim ${1-tests/}
