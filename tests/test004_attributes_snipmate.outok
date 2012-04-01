@@ -1,0 +1,22 @@
+<?php
+
+    /**
+     * ${1:foo}
+     *
+     * @var ${2:mixed}
+     */
+    protected $foo;
+
+    /**
+     * ${1:bar}
+     *
+     * @var ${2:array}
+     */
+    public $bar = array( 1, 2, 3 );
+
+    /**
+     * ${1:lala}
+     *
+     * @var ${2:int}
+     */
+    public static $lala = 23;
