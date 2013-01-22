@@ -105,8 +105,12 @@ func! pdv#DocumentWithSnip()
 	let l:docblock = s:GenerateDocumentation(l:parseconfig, l:data)
 
 	let l:snipy = "pdv_doc_snip"
+    let l:scope = "__pdv_dummy_filetype"
 	let l:sniptext = l:data["indent"] . l:snipy
-	call MakeSnip(&ft, l:snipy, l:docblock)
+
+	" call MakeSnip(&ft, l:snipy, l:docblock)
+    call DestroySnip(l:scope, l:snipy)
+    call MakeSnip(l:scope, l:snipy, l:docblock)
 
 	call append(l:docline - 1, [l:sniptext])
 	call cursor(l:docline, len(l:sniptext))
