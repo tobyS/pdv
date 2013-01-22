@@ -57,7 +57,7 @@ let s:regex["param"] = ' *\([^ &]*\)\s*\(&\?\)\$\([^ =)]\+\)\s*\(=\s*\(.*\)\)\?$
 let s:regex["attribute"] = '^\(\s*\)\(\(private\s*\|public\s*\|protected\s*\|static\s*\)\+\)\s*\$\([^ ;=]\+\)[ =]*\(.*\);\?$'
 
 " [:spacce:]*(abstract|final|)[:space:]*(class|interface)+[:space:]+\(extends ([:identifier:])\)?[:space:]*\(implements ([:identifier:][, ]*)+\)?
-let s:regex["class"] = '^\(\s*\)\(.*\)\s*\(interface\|class\)\s*\(\S\+\)\s*\([^{]*\){\?$'
+let s:regex["class"] = '^\(\s*\)\(\S*\)\s*\(interface\|class\)\s*\(\S\+\)\s*\([^{]*\){\?$'
 
 let s:regex["types"] = {}
 
