@@ -103,19 +103,14 @@ func! pdv#DocumentWithSnip()
 	let l:parseconfig = s:DetermineParseConfig(getline(l:docline))
 	let l:data = s:ParseDocData(l:docline, l:parseconfig)
 	let l:docblock = s:GenerateDocumentation(l:parseconfig, l:data)
+    let l:snippet = join(s:ApplyIndent(l:docblock, l:data["indent"]), "\n")
 
-	let l:snipy = "pdv_doc_snip"
-    let l:scope = "__pdv_dummy_filetype"
-	let l:sniptext = l:data["indent"] . l:snipy
+	let l:indent = l:data["indent"]
 
-	" call MakeSnip(&ft, l:snipy, l:docblock)
-    call DestroySnip(l:scope, l:snipy)
-    call MakeSnip(l:scope, l:snipy, l:docblock)
+	call append(l:docline - 1, [""])
+	call cursor(l:docline, 0)
 
-	call append(l:docline - 1, [l:sniptext])
-	call cursor(l:docline, len(l:sniptext))
-
-	exe "normal! a\<c-r>=TriggerSnippet()\<cr>"
+    call UltiSnips_Anon(l:snippet)
 endfunc
 
 func! s:DetermineParseConfig(line)
