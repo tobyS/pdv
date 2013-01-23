@@ -5,7 +5,7 @@ source helpers/functions.vim
 edit test004_attributes_snipmate.in
 
 let doclines = [7, 5, 3]
-call DocumentLines(doclines)
+call DocumentLinesWithSnip(doclines)
 
 call vimtest#SaveOut()
 call vimtest#Quit()
