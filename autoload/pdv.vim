@@ -110,7 +110,7 @@ func! pdv#DocumentWithSnip()
 	call append(l:docline - 1, [""])
 	call cursor(l:docline, 0)
 
-    call UltiSnips_Anon(l:snippet)
+    call UltiSnips#Anon(l:snippet)
 endfunc
 
 func! s:DetermineParseConfig(line)
