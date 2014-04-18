@@ -18,7 +18,9 @@ Try it out now.
 ------------
 Requirements
 ------------
-[Vmustache](https://github.com/tobyS/vmustache) is a required plugin for PDV to work
+Vmustache__ is a required plugin for PDV to work
+
+__ https://github.com/tobyS/vmustache 
 
 
 -------
