@@ -15,6 +15,12 @@ __ https://github.com/SirVer/ultisnips
 
 Try it out now.
 
+------------
+Requirements
+------------
+[Vmustache](https://github.com/tobyS/vmustache) is a required plugin for PDV to work
+
+
 -------
 Install
 -------
