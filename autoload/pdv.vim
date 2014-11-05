@@ -59,6 +59,9 @@ let s:regex["attribute"] = '^\(\s*\)\(\(private\s*\|public\s*\|protected\s*\|sta
 " [:spacce:]*(abstract|final|)[:space:]*(class|interface)+[:space:]+\(extends ([:identifier:])\)?[:space:]*\(implements ([:identifier:][, ]*)+\)?
 let s:regex["class"] = '^\(\s*\)\(\S*\)\s*\(interface\|class\)\s*\(\S\+\)\s*\([^{]*\){\?$'
 
+let s:regex["variable"] = '^\(\s*\)\(\$[^ =]\+\)\s*=\s*\([^;]\+\);$'
+let s:regex["newobject"] = '^\s*new\s*\([^(;]\+\).*$'
+
 let s:regex["types"] = {}
 
 let s:regex["types"]["array"]  = "^array *(.*"
@@ -79,6 +82,9 @@ let s:mapping = [
     \ {"regex": s:regex["class"],
     \  "function": function("pdv#ParseClassData"),
     \  "template": "class"},
+    \ {"regex": s:regex["variable"],
+    \  "function": function("pdv#ParseVariableData"),
+    \  "template": "variable"},
 \ ]
 
 func! pdv#DocumentCurrentLine()
@@ -211,6 +217,27 @@ func! pdv#ParseAttributeData(line)
 	" TODO: Cleanup ; and friends
 	let l:data["default"] = get(l:matches, 5, '')
 	let l:data["type"] = s:GuessType(l:data["default"])
+
+	return l:data
+endfunc
+
+func! pdv#ParseVariableData(line)
+	let l:text = getline(a:line)
+
+	let l:data = {}
+	let l:matches = matchlist(l:text, s:regex["variable"])
+
+	let l:data["indent"] = l:matches[1]
+	let l:data["name"] = l:matches[2]
+	" TODO: Cleanup ; and friends
+	let l:data["default"] = get(l:matches, 3, '')
+
+	let l:types = matchlist(l:matches[3], s:regex["newobject"])
+	if (!empty(l:types))
+		let l:data["type"] = l:types[1]
+    elseif (!empty(l:data["default"]))
+        let l:data["type"] = s:GuessType(l:data["default"])
+	endif
 
 	return l:data
 endfunc
