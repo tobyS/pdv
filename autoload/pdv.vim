@@ -65,7 +65,7 @@ let s:regex["types"]["array"]  = "^array *(.*"
 let s:regex["types"]["float"]  = '^[0-9]*\.[0-9]\+'
 let s:regex["types"]["int"]    = '^[0-9]\+'
 let s:regex["types"]["string"] = "['\"].*"
-let s:regex["types"]["bool"] = "\(true\|false\)"
+let s:regex["types"]["bool"] = '\(true\|false\)'
 
 let s:regex["indent"] = '^\s*'
 
