@@ -2,7 +2,7 @@
 " ===========================
 "
 " Version: 2.0.0alpha1
-" 
+"
 " Copyright 2005-2011 by Tobias Schlitt <toby@php.net>
 "
 " Provided under the GPL (http://www.gnu.org/copyleft/gpl.html).
@@ -10,18 +10,18 @@
 " This script provides functions to generate phpDocumentor conform
 " documentation blocks for your PHP code. The script currently
 " documents:
-" 
+"
 " - Classes
 " - Methods/Functions
 " - Attributes
 "
-" All of those supporting PHP 5 syntax elements. 
+" All of those supporting PHP 5 syntax elements.
 "
-" Beside that it allows you to define default values for phpDocumentor tags 
-" like @version (I use $id$ here), @author, @license and so on. 
+" Beside that it allows you to define default values for phpDocumentor tags
+" like @version (I use $id$ here), @author, @license and so on.
 "
-" For function/method parameters and attributes, the script tries to guess the 
-" type as good as possible from PHP5 type hints or default values (array, bool, 
+" For function/method parameters and attributes, the script tries to guess the
+" type as good as possible from PHP5 type hints or default values (array, bool,
 " int, string...).
 "
 " You can use this script by mapping the function PhpDoc() to any
@@ -32,8 +32,8 @@ let s:old_cpo = &cpo
 set cpo&vim
 
 "
-" Regular expressions 
-" 
+" Regular expressions
+"
 
 let s:comment = ' *\*/ *'
 
@@ -152,7 +152,20 @@ func! s:ApplyIndent(text, indent)
 endfunc
 
 func! pdv#ParseClassData(line)
+	let l:i = 1
+	let l:curlys = []
 	let l:text = getline(a:line)
+	let l:curlys = matchlist(l:text, '^.*\({\).*$')
+	while l:i <= 10
+		if (len(l:curlys))
+			break
+		endif
+		let l:text = l:text . ' ' . getline(a:line + l:i)
+		let l:curlys = matchlist(l:text, '^.*\({\).*$')
+		let l:i += 1
+	endwhile
+
+	echo l:text
 
 	let l:data = {}
 	let l:matches = matchlist(l:text, s:regex["class"])
@@ -175,16 +188,20 @@ func! s:ParseExtendsImplements(data, text)
 	let l:tokens = split(a:text, '\(\s*,\s*\|\s\+\)')
 
 	let l:extends = 0
+	let l:parents = []
 	for l:token in l:tokens
 		if (tolower(l:token) == "extends")
 			let l:extends = 1
 			continue
 		endif
-		if l:extends
-			let a:data["parent"] = {"name": l:token}
+		if (l:extends && tolower(l:token) == "implements")
 			break
 		endif
+		if (l:extends)
+			call add(l:parents, {"name": l:token})
+		endif
 	endfor
+	let a:data["parents"] = l:parents
 
 	let l:implements = 0
 	let l:interfaces = []
