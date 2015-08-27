@@ -175,7 +175,7 @@ func! s:ParseExtendsImplements(data, text)
 			continue
 		endif
 		if l:extends
-			let a:data["parent"] = {"name": l:token}
+			let a:data["parent"] = [{"name": l:token}]
 			break
 		endif
 	endfor
