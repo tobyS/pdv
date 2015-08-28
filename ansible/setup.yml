@@ -1,0 +1,27 @@
+---
+- hosts: test
+  sudo: yes
+  tasks:
+    - name: Update Cache
+      apt: update_cache=yes
+
+    - name: Install VIM
+      apt: pkg=vim state=latest
+
+    - name: Install Git
+      apt: pkg=git state=present
+
+    - name: Checkout Vundle
+      git: repo=https://github.com/VundleVim/Vundle.vim.git
+           dest=/home/vagrant/.vim/bundle/Vundle.vim
+
+    - name: Upload .vimrc
+      copy: src=files/vimrc dest=/home/vagrant/.vimrc owner=vagrant
+
+    - name: Permissions on .vim/
+      file: path=/home/vagrant/.vim owner=vagrant group=vagrant recurse=yes
+
+    - name: Install VIM bundles
+      shell: vim +PluginInstall +qall >> ~/bundle.log
+      sudo: yes
+      sudo_user: vagrant
