@@ -24,8 +24,8 @@
 " type as good as possible from PHP5 type hints or default values (array, bool, 
 " int, string...).
 "
-" You can use this script by mapping the function PhpDoc() to any
-" key combination. Hit this on the line where the element to document
+" You can use this script by mapping the function pdv#DocumentCurrentLine() to
+" any key combination. Hit this on the line where the element to document
 " resides and the doc block will be created directly above that line.
 
 let s:old_cpo = &cpo
