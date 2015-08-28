@@ -2,16 +2,161 @@
 "test005_functions_snipmate.in" 
 "test005_functions_snipmate.in" 50L, 996C
 Docline: 48
+No matching autocommands
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 46
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 42
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 38
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 30
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 27
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 24
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 20
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 17
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 13
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 9
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 6
-"~/dev/VIM/pdv.git/tests/test005_functions_snipmate.out" 
-"~/dev/VIM/pdv.git/tests/test005_functions_snipmate.out" [New] 113L, 2178C written
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
+"~/pdv/tests/test005_functions_snipmate.out" 
+"~/pdv/tests/test005_functions_snipmate.out" [New] 113L, 1983C written

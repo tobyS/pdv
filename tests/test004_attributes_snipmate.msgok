@@ -2,7 +2,44 @@
 "test004_attributes_snipmate.in" 
 "test004_attributes_snipmate.in" 7L, 95C
 Docline: 7
+No matching autocommands
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 5
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
 Docline: 3
-"~/dev/VIM/pdv/tests/test004_attributes_snipmate.out" 
-"~/dev/VIM/pdv/tests/test004_attributes_snipmate.out" [New] 22L, 280C written
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+
+s  <NL>        *@<Esc>:call UltiSnips#JumpForwards()<CR>
+s  <C-K>       *@<Esc>:call UltiSnips#JumpBackwards()<CR>
+s  <C-H>       * <C-G>c
+s  <Tab>       * <Esc>:call UltiSnips#ExpandSnippet()<CR>
+s  <C-R>       * <C-G>"_c<C-R>
+s  <Del>       * <C-G>c
+s  <BS>        * <C-G>c
+s  <C-Tab>     * <Esc>:call UltiSnips#ListSnippets()<CR>
+"~/pdv/tests/test004_attributes_snipmate.out" 
+"~/pdv/tests/test004_attributes_snipmate.out" [New] 22L, 250C written
