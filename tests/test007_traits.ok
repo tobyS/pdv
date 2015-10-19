@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * Trait: Test1
+ */
+trait Test1 {
+}
+
+	/**
+	 * Trait: Test2
+	 */
+	trait Test2
+	{
+	}
+
+  /**
+   * Trait: Test3
+   */
+  trait Test3 {
+  }
