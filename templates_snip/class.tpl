@@ -1,8 +1,8 @@
 /**
  * Class: ${1:{{name}}}
  *{{#interfaces}}
- * @see {{name}}{{/interfaces}}{{#parent}}
- * @see {{name}}{{/parent}}{{#abstract}}
+ * @uses {{name}}{{/interfaces}}{{#parent}}
+ * @uses {{name}}{{/parent}}{{#abstract}}
  * @abstract{{/abstract}}{{#final}}
  * @final{{/final}}
  */
