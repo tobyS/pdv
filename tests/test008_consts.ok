@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * FOO
+ */
+const FOO='bar';
+
+class Bar {
+	/**
+	 * BAR
+	 */
+	const BAR	=123;
+}
+
+  /**
+   * BAZ
+   */
+  const BAZ = false;

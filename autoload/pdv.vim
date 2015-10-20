@@ -14,6 +14,7 @@
 " - Classes
 " - Methods/Functions
 " - Attributes
+" - Consts
 " - Interfaces
 " - Traits
 "
@@ -55,6 +56,10 @@ let s:regex["function"] = '^\(\s*\)\([a-zA-Z ]*\)function\s\+\([^ (]\+\)\s*('
 " [:typehint:]*[:space:]*$[:identifier]\([:space:]*=[:space:]*[:value:]\)?
 let s:regex["param"] = ' *\([^ &]*\)\s*\(&\?\)\$\([^ =)]\+\)\s*\(=\s*\(.*\)\)\?$'
 
+" ^(?<indent>\s*)const\s+(?<name>\S+)\s*=
+" 1:indent, 2:name
+let s:regex["const"] = '^\(\s*\)const\s\+\(\S\+\)\s*='
+
 " [:space:]*(private|protected|public\)[:space:]*$[:identifier:]+\([:space:]*=[:space:]*[:value:]+\)*;
 let s:regex["attribute"] = '^\(\s*\)\(\(private\s*\|public\s*\|protected\s*\|static\s*\)\+\)\s*\$\([^ ;=]\+\)[ =]*\(.*\);\?$'
 
@@ -87,6 +92,9 @@ let s:mapping = [
     \ {"regex": s:regex["attribute"],
     \  "function": function("pdv#ParseAttributeData"),
     \  "template": "attribute"},
+    \ {"regex": s:regex["const"],
+    \  "function": function("pdv#ParseConstData"),
+    \  "template": "const"},
     \ {"regex": s:regex["class"],
     \  "function": function("pdv#ParseClassData"),
     \  "template": "class"},
@@ -248,6 +256,20 @@ func! s:ParseExtendsImplements(data, text)
 	endfor
 	let a:data["interfaces"] = l:interfaces
 
+endfunc
+
+" ^(?<indent>\s*)const\s+(?<name>\S+)\s*=
+" 1:indent, 2:name
+func! pdv#ParseConstData(line)
+	let l:text = getline(a:line)
+
+	let l:data = {}
+	let l:matches = matchlist(l:text, s:regex["const"])
+
+	let l:data["indent"] = l:matches[1]
+	let l:data["name"] = l:matches[2]
+
+	return l:data
 endfunc
 
 func! pdv#ParseAttributeData(line)
