@@ -14,6 +14,9 @@
 " - Classes
 " - Methods/Functions
 " - Attributes
+" - Consts
+" - Interfaces
+" - Traits
 "
 " All of those supporting PHP 5 syntax elements. 
 "
@@ -53,11 +56,24 @@ let s:regex["function"] = '^\(\s*\)\([a-zA-Z ]*\)function\s\+\([^ (]\+\)\s*('
 " [:typehint:]*[:space:]*$[:identifier]\([:space:]*=[:space:]*[:value:]\)?
 let s:regex["param"] = ' *\([^ &]*\)\s*\(&\?\)\$\([^ =)]\+\)\s*\(=\s*\(.*\)\)\?$'
 
+" ^(?<indent>\s*)const\s+(?<name>\S+)\s*=
+" 1:indent, 2:name
+let s:regex["const"] = '^\(\s*\)const\s\+\(\S\+\)\s*='
+
 " [:space:]*(private|protected|public\)[:space:]*$[:identifier:]+\([:space:]*=[:space:]*[:value:]+\)*;
 let s:regex["attribute"] = '^\(\s*\)\(\(private\s*\|public\s*\|protected\s*\|static\s*\)\+\)\s*\$\([^ ;=]\+\)[ =]*\(.*\);\?$'
 
 " [:spacce:]*(abstract|final|)[:space:]*(class|interface)+[:space:]+\(extends ([:identifier:])\)?[:space:]*\(implements ([:identifier:][, ]*)+\)?
-let s:regex["class"] = '^\(\s*\)\(\S*\)\s*\(interface\|class\)\s*\(\S\+\)\s*\([^{]*\){\?$'
+
+let s:regex["class"] = '^\(\s*\)\(\S*\)\s*\(class\)\s*\(\S\+\)\s*\([^{]*\){\?$'
+
+" ^(?<indent>\s*)interface\s+(?<name>\S+)(\s+extends\s+(?<interface>\s+)(\s*,\s*(?<interface>\S+))*)?\s*{?\s*$
+" 1:indent, 2:name, 4,6,8,...:extended interfaces
+let s:regex["interface"] = '^\(\s*\)interface\s\+\(\S\+\)\(\s\+extends\s\+\(\S\+\)\(\s*,\s*\(\S\+\)\)*\)\?\s*{\?\s*$'
+
+" ^(?<indent>\s*)trait\s+(?<name>\S+)\s*{?\s*$
+" 1:indent, 2:name
+let s:regex["trait"] = '^\(\s*\)trait\s\+\(\S\+\)\s*{\?\s*$'
 
 let s:regex["types"] = {}
 
@@ -76,9 +92,18 @@ let s:mapping = [
     \ {"regex": s:regex["attribute"],
     \  "function": function("pdv#ParseAttributeData"),
     \  "template": "attribute"},
+    \ {"regex": s:regex["const"],
+    \  "function": function("pdv#ParseConstData"),
+    \  "template": "const"},
     \ {"regex": s:regex["class"],
     \  "function": function("pdv#ParseClassData"),
     \  "template": "class"},
+    \ {"regex": s:regex["interface"],
+    \  "function": function("pdv#ParseInterfaceData"),
+    \  "template": "interface"},
+    \ {"regex": s:regex["trait"],
+    \  "function": function("pdv#ParseTraitData"),
+    \  "template": "trait"},
 \ ]
 
 func! pdv#DocumentCurrentLine()
@@ -153,7 +178,6 @@ func! pdv#ParseClassData(line)
 
 	let l:data["indent"] = matches[1]
 	let l:data["name"] = matches[4]
-	let l:data["interface"] = matches[3] == "interface"
 	let l:data["abstract"] = s:GetAbstract(matches[2])
 	let l:data["final"] = s:GetFinal(matches[2])
 
@@ -161,6 +185,42 @@ func! pdv#ParseClassData(line)
 		call s:ParseExtendsImplements(l:data, l:matches[5])
 	endif
 	" TODO: abstract? final?
+
+	return l:data
+endfunc
+
+" ^(?<indent>\s*)interface\s+(?<name>\S+)(\s+extends\s+(?<interface>\s+)(\s*,\s*(?<interface>\S+))*)?\s*{?\s*$
+" 1:indent, 2:name, 4,6,8,...:extended interfaces
+func! pdv#ParseInterfaceData(line)
+	let l:text = getline(a:line)
+
+	let l:data = {}
+	let l:matches = matchlist(l:text, s:regex["interface"])
+
+	let l:data["indent"] = matches[1]
+	let l:data["name"] = matches[2]
+
+	let l:data["parents"] = []
+
+	let i = 2
+	while !empty(l:matches[i+2])
+		let i += 2
+		let l:data["parents"] += [{"name":matches[i]}]
+	endwhile
+
+	return l:data
+endfunc
+
+" ^(?<indent>\s*)trait\s+(?<name>\S+)\s*{?\s*$
+" 1:indent, 2:name
+func! pdv#ParseTraitData(line)
+	let l:text = getline(a:line)
+
+	let l:data = {}
+	let l:matches = matchlist(l:text, s:regex["trait"])
+
+	let l:data["indent"] = matches[1]
+	let l:data["name"] = matches[2]
 
 	return l:data
 endfunc
@@ -196,6 +256,20 @@ func! s:ParseExtendsImplements(data, text)
 	endfor
 	let a:data["interfaces"] = l:interfaces
 
+endfunc
+
+" ^(?<indent>\s*)const\s+(?<name>\S+)\s*=
+" 1:indent, 2:name
+func! pdv#ParseConstData(line)
+	let l:text = getline(a:line)
+
+	let l:data = {}
+	let l:matches = matchlist(l:text, s:regex["const"])
+
+	let l:data["indent"] = l:matches[1]
+	let l:data["name"] = l:matches[2]
+
+	return l:data
 endfunc
 
 func! pdv#ParseAttributeData(line)

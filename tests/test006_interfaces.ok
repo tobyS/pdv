@@ -1,0 +1,51 @@
+<?php
+
+/**
+ * Interface: SimplestInterface
+ *
+ */
+interface SimplestInterface {
+}
+
+/**
+ * Interface: DerivedInterface
+ *
+ * @see BaseInterface
+ */
+interface DerivedInterface extends BaseInterface
+{
+}
+
+/**
+ * Interface: DoublyDerivedInterface
+ *
+ * @see BaseInterface1
+ * @see BaseInterface2
+ */
+interface DoublyDerivedInterface extends BaseInterface1, BaseInterface2
+{
+}
+
+	/**
+	 * Interface: IndentedInterface
+	 *
+	 */
+	interface IndentedInterface {
+	}
+
+  /**
+   * Interface: SpaceIndentedInterface
+   *
+   */
+  interface SpaceIndentedInterface {
+  }
+
+  /**
+   * Interface: SpacedInterface
+   *
+   * @see BaseInterface1
+   * @see BaseInterface2
+   */
+  interface     SpacedInterface		extends    BaseInterface1   , 	BaseInterface2
+  {
+  }
