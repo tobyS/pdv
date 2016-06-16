@@ -34,6 +34,10 @@
 let s:old_cpo = &cpo
 set cpo&vim
 
+if !exists('g:pdv_template_dir')
+	let g:pdv_template_dir = expand('<sfile>:p:h:h') . '/templates_snip'
+endif
+
 "
 " Regular expressions 
 " 
