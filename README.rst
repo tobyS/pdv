@@ -38,9 +38,8 @@ __ https://github.com/gmarik/vundle
 
 in your ``.vimrc`` and then run ``:BundleInstall`` in a new VIM instance.
 
-Before using PDV you must set the variable ``pdv_template_dir`` which points to
-your templates. After that, you should map one of the following functions to a
-key of your choice:
+Before using PDV, you should map one of the following functions to a key of
+your choice:
 
 pdv#DocumentCurrentLine()
     Generates the doc block as you know it from PDV 1, but using the templates
@@ -51,6 +50,10 @@ pdv#DocumentWithSnip()
     into the first tab right after the doc block was generated.
 
 __ https://github.com/SirVer/ultisnips
+
+If you'd like to use templates other than the ones in the ``templates_snip``
+directory, you should set the variable ``pdv_template_dir`` which points to
+your templates.
 
 My config for PDV looks like this::
 
