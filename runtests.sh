@@ -1,2 +1,5 @@
 #!/bin/bash
-runVimTests.sh --source `pwd`/autoload/pdv.vim ${1-tests/}
+~/.vim/bundle/runVimTests/bin/runVimTests.sh -2 \
+    --source "`pwd`/autoload/pdv.vim" \
+    --source "`pwd`/autoload/parparse.vim" \
+    ${1-tests/}
