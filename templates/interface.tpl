@@ -1,5 +1,5 @@
 /**
  * Interface: {{name}}
  *{{#parents}}
- * @see {{name}}{{/parents}}
+ * @uses {{name}}{{/parents}}
  */
