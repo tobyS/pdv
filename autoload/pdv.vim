@@ -295,11 +295,16 @@ func! pdv#ParseFunctionData(line)
 	let l:data = s:ParseBasicFunctionData(l:text)
 	let l:data["parameters"] = []
 
-	let l:parameters = parparse#ParseParameters(a:line)
+	let l:functionData = parparse#ParseParameters(a:line)
+	let l:parameters = l:functionData["parameters"]
 
 	for l:param in l:parameters
 		call add(l:data["parameters"], s:ParseParameterData(l:param))
 	endfor
+	
+	if (l:functionData["return"] != "")
+		let l:data["return"] = l:functionData["return"]
+	endif
 
 	return l:data
 endfunc

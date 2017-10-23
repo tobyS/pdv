@@ -1,6 +1,6 @@
 func! parparse#ParseParameters(line)
 
-	let l:context = {"pos": {"line": a:line, "col": 0}, "counter": 0, "stack": []}
+	let l:context = {"pos": {"line": a:line, "col": 0}, "counter": 0, "stack": [], "return": ""}
 
 	call s:SkipToParamList(l:context)
 
@@ -13,6 +13,7 @@ func! parparse#ParseParameters(line)
 
 		if (s:IsEndOfParamList(l:context))
 			call s:ReduceParameter(l:context)
+			call s:RecordReturn(l:context)
 			break
 		endif
 
@@ -22,7 +23,7 @@ func! parparse#ParseParameters(line)
 			call s:ReduceParameter(l:context)
 		endif
 	endwhile
-	return l:context["stack"]
+	return {"parameters": l:context["stack"], "return": l:context["return"]}
 endfunc
 
 func! s:IsEndOfParamList(context)
@@ -96,3 +97,22 @@ func! s:ReduceParameter(context)
 	let l:param = l:parammatch[1]
 	call add(a:context["stack"], l:param)
 endfunc
+
+
+func! s:RecordReturn(context)
+	let l:line = a:context["pos"]["line"]
+	let l:text = getline(l:line)
+	let l:matches = matchlist(l:text, ')\s*:\s*\(?*\)\s*\([a-zA-Z_0-9]\+\)')
+
+	if(empty(l:matches))
+		return
+	endif
+
+	if (l:matches[1] == '?')
+    	let return = "null|".l:matches[2]
+	else
+		let return = l:matches[2]
+	endif
+
+	let a:context["return"] = l:return
+endfunc!
