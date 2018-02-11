@@ -51,10 +51,12 @@ let s:regex["abstract"] = '\(abstract\)'
 " (final)
 let s:regex["final"] = '\(final\)'
 
-" [:space:]*(private|protected|public|static|abstract)*[:space:]+[:identifier:]+\([:params:]\)
-let s:regex["function"] = '^\(\s*\)\([a-zA-Z ]*\)function\s\+\([^ (]\+\)\s*('
-" [:typehint:]*[:space:]*$[:identifier]\([:space:]*=[:space:]*[:value:]\)?
-let s:regex["param"] = ' *\([^ &]*\)\s*\(&\?\)\$\([^ =)]\+\)\s*\(=\s*\(.*\)\)\?$'
+" (\?)?[:space:]*([:typehint:])
+let s:regex["typehint"] = '\(?\)\?\s*\(\w\+\)'
+" [:space:]*(private|protected|public|static|abstract)*[:space:]+[:identifier:]+\([:params:]\)\([:space:]*:[:space*](\?)?([:typehint:])\)?
+let s:regex["function"] = '^\(\s*\)\([a-zA-Z ]*\)function\s\+\([^ (]\+\)\s*([^)]*)\%(\s*:\s*' . s:regex["typehint"] . '\)\?'
+" \??[:space:]*[:typehint:]*[:space:]*$[:identifier]\([:space:]*=[:space:]*[:value:]\)?
+let s:regex["param"] = ' *\%(' . s:regex["typehint"] . '\)\?\s*\(&\)\?\$\([^ =)]\+\)\s*\%(=\s*\(.*\)\)\?$'
 
 " ^(?<indent>\s*)const\s+(?<name>\S+)\s*=
 " 1:indent, 2:name
@@ -298,7 +300,7 @@ func! pdv#ParseFunctionData(line)
 	let l:parameters = parparse#ParseParameters(a:line)
 
 	for l:param in l:parameters
-		call add(l:data["parameters"], s:ParseParameterData(l:param))
+        call add(l:data["parameters"], s:ParseParameterData(l:param))
 	endfor
 
 	return l:data
@@ -309,12 +311,16 @@ func! s:ParseParameterData(text)
 
 	let l:matches = matchlist(a:text, s:regex["param"])
 
-	let l:data["reference"] = (l:matches[2] == "&")
-	let l:data["name"] = l:matches[3]
+	let l:data["reference"] = (l:matches[3] == "&")
+	let l:data["name"] = l:matches[4]
 	let l:data["default"] = l:matches[5]
 
-	if (!empty(l:matches[1]))
-		let l:data["type"] = l:matches[1]
+	if (!empty(l:matches[2]))
+		let l:data["type"] = l:matches[2]
+
+        if (!empty(l:matches[1]))
+            let l:data["type"] .= "|null"
+        endif
 	elseif (!empty(l:data["default"]))
 		let l:data["type"] = s:GuessType(l:data["default"])
 	endif
@@ -327,10 +333,15 @@ func! s:ParseBasicFunctionData(text)
 
 	let l:matches = matchlist(a:text, s:regex["function"])
 
-	let l:data["indent"] = l:matches[1]
-	let l:data["scope"] = s:GetScope(l:matches[2])
-	let l:data["static"] = s:GetStatic(l:matches[2])
-	let l:data["name"] = l:matches[3]
+	let l:data["indent"]      = l:matches[1]
+    let l:data["scope"]       = s:GetScope(l:matches[2])
+	let l:data["static"]      = s:GetStatic(l:matches[2])
+	let l:data["name"]        = l:matches[3]
+    let l:data["return_type"] = l:matches[5]
+
+    if (!empty(l:matches[4]))
+        let l:data["return_type"] .= "|null"
+    endif
 
 	return l:data
 endfunc
